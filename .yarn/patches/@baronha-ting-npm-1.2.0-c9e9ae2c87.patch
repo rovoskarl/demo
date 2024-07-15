@@ -1,0 +1,13 @@
+diff --git a/android/src/main/java/com/ting/TingModule.kt b/android/src/main/java/com/ting/TingModule.kt
+index 6b95315178f9e43c04eb6f6621d76608de813353..3616eb167ad1cafca15ca1bbd3cb4be68b063552 100644
+--- a/android/src/main/java/com/ting/TingModule.kt
++++ b/android/src/main/java/com/ting/TingModule.kt
+@@ -80,7 +80,7 @@ class TingModule internal constructor(context: ReactApplicationContext) : TingSp
+           // Add drag gesture recognizer
+           contentView?.let { contentView ->
+             val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+-              override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
++              override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+                 // Check if the user scrolls vertically and dismiss the toast window if needed
+                 if (abs(distanceY) > abs(distanceX)) {
+                   if (position == Gravity.TOP && distanceY > dragThreshold) { // Dismiss upward if toast is at the top

@@ -1,0 +1,49 @@
+diff --git a/ios/RNAliyunOSS.m b/ios/RNAliyunOSS.m
+index 8dd1a6858aad7ab0a2f6a563de666195301503ff..f25a85393e4ba1db62bd60bc69054af293ef2619 100644
+--- a/ios/RNAliyunOSS.m
++++ b/ios/RNAliyunOSS.m
+@@ -67,11 +67,11 @@ RCT_EXPORT_METHOD(asyncUploadFile:(NSString *)bucketName filename:(NSString *)fi
+                 
+         put.objectKey = filename;
+         
+-        // put.uploadingFileURL = [NSURL URLWithString:fileurl];
++         put.uploadingFileURL = [NSURL URLWithString:fileurl];
+         
+         put.uploadingData = data;
+ 
+-        put.contentType = @"image/png";
++          put.contentType = @"application/octet-stream";
+         
+         put.uploadProgress = ^(int64_t bytesSent, int64_t totalByteSent, int64_t totalBytesExpectedToSend) {
+             // 指定当前上传长度、当前已经上传总长度、待上传的总长度。
+@@ -90,7 +90,7 @@ RCT_EXPORT_METHOD(asyncUploadFile:(NSString *)bucketName filename:(NSString *)fi
+                 NSLog(@"upload object success!");
+                 resolve(@{
+                     @"bucket": [NSString stringWithFormat:@"%@", bucketName],
+-                    @"filename": [NSString stringWithFormat:@"%@", filename]
++                    @"fileName": [NSString stringWithFormat:@"%@", filename]
+                 });
+             } else {
+                 NSLog(@"upload object failed, error: %@" , task.error);
+diff --git a/src/NativeRCTAliyunOSS.ts b/src/NativeRCTAliyunOSS.ts
+index 897367cfc73722a72238dac49e309971283f89ed..34a43f8bbfec30c953bd8faf3ef75041516e0d11 100644
+--- a/src/NativeRCTAliyunOSS.ts
++++ b/src/NativeRCTAliyunOSS.ts
+@@ -4,12 +4,12 @@ import { TurboModuleRegistry } from 'react-native';
+ export interface Spec extends TurboModule {
+   multiply(a: number, b: number): Promise<number>;
+   initSdk(
+-    securityToken: String,
+-    accessKeyId: String,
+-    accessKeySecret: String,
+-    endpoint: String
++    securityToken: string,
++    accessKeyId: string,
++    accessKeySecret: string,
++    endpoint: string
+   ): void;
+-  asyncUploadFile(bucketName: String, fileName: String, filePath: String): void;
++  asyncUploadFile(bucketName: string, fileName: string, filePath: string): void;
+ }
+ 
+ export default TurboModuleRegistry.getEnforcing<Spec>('RCTAliyunOSS');

@@ -1,0 +1,26 @@
+export type TypeSelectionState = {
+  selectType: string;
+  typeSheetOpen: boolean;
+  selectMode: boolean;
+  folderIds: Array<Record<string, any>>;
+  pointerList: Array<Record<string, any>>;
+  pointerIds: Array<Record<string, any>>;
+  folderPointerCount: number;
+  icon: string;
+  color: any[];
+  description: string;
+  groupList: Array<Record<string, any>>;
+  groupIndexMap: Record<string, any>[];
+  setSelectType: (selectType: string) => void;
+  setTypeSheetOpen: (typeSheetOpen: boolean) => void;
+  setSelectMode: (selectMode: boolean) => void;
+  setPointerList: (pointerList: Array<Record<string, any>>) => void;
+  setPointerIds: (pointerIds: Array<Record<string, any>>) => void;
+  setFolderIds: (folderIds: Array<any>) => void;
+  setFolderPointerCount: (folderPointerCount: number) => void;
+  setIcon: (icon: string) => void;
+  setColor: (color: any[]) => void;
+  setDescription: (description: string) => void;
+  setGroupList: (groupList: Array<Record<string, any>>) => void;
+  setGroupIndexMap: (groupIndexMap: Record<string, any>[]) => void;
+};

@@ -1,0 +1,5 @@
+app_identifier("com.tastien.tastrek") # The bundle identifier of your app
+apple_id("mhecy98@gmail.com") # Your Apple Developer Portal username
+
+itc_team_id("125218576") # App Store Connect Team ID
+team_id("Y72S5PNK2M") # Developer Portal Team ID

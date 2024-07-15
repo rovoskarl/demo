@@ -1,0 +1,23 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "files": ["./nativewind-env.d.ts", "src/screens/video/hooks/useTracker.tsx"],
+  "include": ["./src/**/*"],
+  "compilerOptions": {
+    "jsx": "react-native",
+    "baseUrl": "./",
+    "target": "ESNext",
+    "types": ["reflect-metadata"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": true,
+    "paths": {
+      "@/src/*": ["./src/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/types/*": ["src/interfaces/*"],
+      "@/client/*": ["./src/client/*"],
+      "@/screens/*": ["./src/screens/*"]
+    }
+  }
+}

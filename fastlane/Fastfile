@@ -1,0 +1,241 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+skip_docs
+opt_out_usage
+
+$pgyer_API_KEY = '53092e248b65f2ef6c97573690c2866b'
+
+# 安卓打包
+platform :android do
+  desc "构建测试安卓包"
+  lane :build_test do
+    ENV["ENVFILE"] = ".env"
+
+    gradle(
+      project_dir: "./android",
+      task: "assemble",
+      flavor: "Development",
+      build_type: "Release"
+    )
+  end
+
+  desc "构建预发布安卓包"
+  lane :build_stage do
+    ENV["ENVFILE"] = ".env.stage"
+
+    gradle(
+      project_dir: "./android",
+      task: "assemble",
+      flavor: "Stage",
+      build_type: "Release"
+    )
+  end
+
+  desc "构建生产安卓包"
+  lane :build_prod do
+    ENV["ENVFILE"] = ".env.prod"
+
+    gradle(
+      project_dir: "./android",
+      task: "assemble",
+      flavor: "Production",
+      build_type: "Release"
+    )
+  end
+
+end
+
+# iOS打包
+platform :ios do
+  create_keychain(
+    name: "smart_helper_ios.keychain",
+    password: "a123456.",
+    unlock: true,
+    timeout: 3600,
+    add_to_search_list: true,
+    default_keychain: true
+  )
+
+  desc "构建测试环境内测包"
+  lane :build_test do
+    ENV["ENVFILE"] = ".env"
+
+    # import_certificate(
+    #   certificate_path: "./ios/dev.p12",
+    #   keychain_name: "smart_helper_ios.keychain",
+    #   keychain_password: "a123456.",
+    #   certificate_password: "TSTtst123."
+    # )
+
+    # install_provisioning_profile(
+    #   path: "./ios/comtastientastrek_dev.mobileprovision"
+    # )
+
+    gym(
+      # 每次打包之前clean一下
+      clean: true,
+      workspace: "./ios/smart_helper.xcworkspace",
+      output_directory: './build/ios',
+      output_name: "smart-dev.ipa",
+      scheme: "dev",
+      # 默认 Release，Release or Debug
+      configuration: 'Release',
+      # 打包导出方式，包含 app-store, validation, ad-hoc, package, enterprise, development, developer-id and mac-application
+      export_method: 'development',
+      # 这个设置是为了设置 xcode 自动配置证书和配置文件，当然也可以手动配置，可以参考文档
+      # export_xcargs: '-allowProvisioningUpdates',
+      export_options: {
+        method: "development",
+        provisioningProfiles: {
+          "com.tastien.tastrek" => "com.tastien.tastrek_dev",
+        },
+        manageAppVersionAndBuildNumber: false
+      }
+    )
+    # mac上的通知弹窗，通知打包完毕
+    # notification(app_icon: "./fastlane/icon.png", title: "manager", subtitle: "打包成功，已导出安装包", message: "准备发布到蒲公英中……")
+    # 配置上传蒲公英账号  蒲公英的 api_key和 password (这个是你设置密码下载时用的密码)具体可以参考官方文档https://github.com/PGYER/fastlane-plugin-pgyer
+    pgyer(api_key:$pgyer_API_KEY)
+  end
+
+  desc "构建预发布环境内测包"
+  lane :build_stage do
+    ENV["ENVFILE"] = ".env.stage"
+
+    # import_certificate(
+    #   certificate_path: "./ios/dev.p12",
+    #   keychain_name: "smart_helper_ios.keychain",
+    #   keychain_password: "a123456.",
+    #   certificate_password: "TSTtst123"
+    # )
+
+    # install_provisioning_profile(
+    #   path: "./ios/comtastientastrek_dev.mobileprovision"
+    # )
+
+    gym(
+      # 每次打包之前clean一下
+      clean: true,
+      workspace: "./ios/smart_helper.xcworkspace",
+      output_directory: './build/ios',
+      output_name: "smart-stage.ipa",
+      scheme: "stage",
+      # 默认 Release，Release or Debug
+      configuration: 'Release',
+      # 打包导出方式，包含 app-store, validation, ad-hoc, package, enterprise, development, developer-id and mac-application
+      export_options: {
+        method: "development",
+        provisioningProfiles: {
+          "com.tastien.tastrek" => "com.tastien.tastrek_dev",
+        },
+        manageAppVersionAndBuildNumber: false
+      }
+    )
+    pgyer(api_key:$pgyer_API_KEY)
+  end
+
+  desc "构建生产环境内测包"
+  lane :build_prod do
+    ENV["ENVFILE"] = ".env.prod"
+
+    # import_certificate(
+    #   certificate_path: "./ios/Certificates.p12",
+    #   keychain_name: "smart_helper_ios.keychain",
+    #   keychain_password: "a123456.",
+    #   certificate_password: "TSTtst123"
+    # )
+
+    # install_provisioning_profile(
+    #   path: "./ios/comtastientastrek_adhoc.mobileprovision"
+    # )
+
+    gym(
+      # 每次打包之前clean一下
+      clean: true,
+      workspace: "./ios/smart_helper.xcworkspace",
+      output_directory: './build/ios',
+      output_name: "smart-prod.ipa",
+      scheme: "prod",
+      # 默认 Release，Release or Debug
+      configuration: 'Release',
+      # 打包导出方式，包含 app-store, validation, ad-hoc, package, enterprise, development, developer-id and mac-application
+      export_method: 'ad-hoc',
+      # 这个设置是为了设置 xcode 自动配置证书和配置文件，当然也可以手动配置，可以参考文档
+      export_options: {
+        method: "ad-hoc",
+        provisioningProfiles: {
+          "com.tastien.tastrek" => "com.tastien.tastrek_adhoc",
+        },
+        manageAppVersionAndBuildNumber: false
+      }
+    )
+    pgyer(api_key:$pgyer_API_KEY)
+  end
+
+  desc "发布APP Store"
+  lane :build_release do
+    ENV["ENVFILE"] = ".env.prod"
+
+    # import_certificate(
+    #   certificate_path: "./ios/Certificates.p12",
+    #   keychain_name: "smart_helper_ios.keychain",
+    #   keychain_password: "a123456.",
+    #   certificate_password: "TSTtst123"
+    # )
+
+    # install_provisioning_profile(
+    #   path: "./ios/comtastientastrek_appstore.mobileprovision"
+    # )
+
+    gym(
+      # 每次打包之前clean一下
+      clean: true,
+      workspace: "./ios/smart_helper.xcworkspace",
+      output_directory: './build/ios',
+      output_name: "smart-release.ipa",
+      scheme: "prod",
+      # 默认 Release，Release or Debug
+      configuration: 'Release',
+      # 打包导出方式，包含 app-store, validation, ad-hoc, package, enterprise, development, developer-id and mac-application
+      export_method: 'app-store',
+      # 这个设置是为了设置 xcode 自动配置证书和配置文件，当然也可以手动配置，可以参考文档
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          "com.tastien.tastrek" => "com.tastien.tastrek_appstore",
+        },
+        manageAppVersionAndBuildNumber: false
+      }
+    )
+
+    api_key = app_store_connect_api_key(
+      key_id: "J3PXH8SB84",
+      issuer_id: "0d025844-ec41-4b49-9c33-989cd9e28d1c",
+      key_filepath: "./fastlane/AuthKey_7XP9B2PU8X.p8",
+      duration: 1200, # optional (maximum 1200)
+      in_house: false # optional but may be required if using match/sigh
+    )
+
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true,
+      # username: "1xxxx@163.com",
+      # app_identifier: "com.sxx.xxx",
+      ipa: "./build/ios/smart-#{ENV['ENV']}-#{ENV['APP_VERSION']}.ipa",
+      skip_submission:true
+    )
+  end
+end
